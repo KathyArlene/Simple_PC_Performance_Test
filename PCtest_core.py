@@ -3,6 +3,7 @@
 """
 电脑性能测试工具 - 核心模块
 整合所有测试功能
+支持多语言（中文、英文、日文、西班牙语）
 """
 
 import sys
@@ -15,6 +16,9 @@ from memory_test import memory_test
 from disk_test import disk_io_test
 from gpu_test import gpu_test
 from report_generator import calculate_scores, print_report, save_report
+
+# 导入多语言支持模块
+import language as lang
 
 
 class PerformanceBenchmark:
@@ -54,13 +58,13 @@ class PerformanceBenchmark:
     def run_all_tests(self):
         """运行所有测试"""
         try:
-            print("开始性能测试...\n")
+            print(f"{lang.get('start_performance_test')}\n")
             
             self.print_system_info()
 
             # CPU测试
             print("=" * 60)
-            print("CPU性能测试")
+            print(lang.get('cpu_test'))
             print("=" * 60)
             self.results['cpu_single_thread'] = self.cpu_single_thread_test()
             print()
@@ -69,21 +73,21 @@ class PerformanceBenchmark:
 
             # 内存测试
             print("=" * 60)
-            print("内存性能测试")
+            print(lang.get('memory_test'))
             print("=" * 60)
             self.results['memory'] = self.memory_test()
             print()
 
             # 磁盘I/O测试
             print("=" * 60)
-            print("磁盘I/O性能测试")
+            print(lang.get('disk_test'))
             print("=" * 60)
             self.results['disk_io'] = self.disk_io_test()
             print()
             
             # GPU测试
             print("=" * 60)
-            print("GPU性能测试")
+            print(lang.get('gpu_test'))
             print("=" * 60)
             self.results['gpu'] = self.gpu_test()
             print()
@@ -92,10 +96,10 @@ class PerformanceBenchmark:
             self.generate_report()
             
         except KeyboardInterrupt:
-            print("\n测试被用户中断")
+            print(f"\n{lang.get('test_interrupted')}")
             sys.exit(1)
         except Exception as e:
-            print(f"\n测试过程中出现错误: {e}")
+            print(f"\n{lang.get('test_error_occurred')}: {e}")
             import traceback
             traceback.print_exc()
             sys.exit(1)
@@ -117,9 +121,9 @@ def main():
         benchmark = PerformanceBenchmark()
         benchmark.run_all_tests()
     except KeyboardInterrupt:
-        print("\n测试被用户中断")
+        print(f"\n{lang.get('test_interrupted')}")
     except Exception as e:
-        print(f"测试过程中发生错误: {e}")
+        print(f"{lang.get('test_error_occurred')}: {e}")
         import traceback
         traceback.print_exc()
 

@@ -1,33 +1,49 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-电脑性能测试工具 - 命令行界面
-提供命令行参数解析和测试执行
+电脑性能测试工具 - 命令行版本
+基于PCtest.py的功能，提供命令行界面
+支持多语言（中文、英文、日文、西班牙语）
 """
 
 import sys
-import argparse
 import os
+import argparse
+import json
+import time
+
+# 导入性能测试核心模块
 from PCtest_core import PerformanceBenchmark
+
+# 导入多语言支持模块
+import language as lang
 
 
 def parse_args():
     """解析命令行参数"""
-    parser = argparse.ArgumentParser(description="电脑性能测试工具")
+    parser = argparse.ArgumentParser(description=lang.get('cli_description'))
     
     # 添加测试选项
-    parser.add_argument("--cpu", action="store_true", help="仅运行CPU测试")
-    parser.add_argument("--memory", action="store_true", help="仅运行内存测试")
-    parser.add_argument("--disk", action="store_true", help="仅运行磁盘I/O测试")
-    parser.add_argument("--gpu", action="store_true", help="仅运行GPU测试")
-    parser.add_argument("--all", action="store_true", help="运行所有测试（默认）")
+    parser.add_argument("--cpu", action="store_true", help=lang.get('cli_cpu_help'))
+    parser.add_argument("--memory", action="store_true", help=lang.get('cli_memory_help'))
+    parser.add_argument("--disk", action="store_true", help=lang.get('cli_disk_help'))
+    parser.add_argument("--gpu", action="store_true", help=lang.get('cli_gpu_help'))
+    parser.add_argument("--all", action="store_true", help=lang.get('cli_all_help'))
     
     # 添加输出选项
-    parser.add_argument("--output", "-o", type=str, help="指定报告输出文件路径")
-    parser.add_argument("--quiet", "-q", action="store_true", help="安静模式，仅显示最终结果")
+    parser.add_argument("--output", "-o", type=str, help=lang.get('cli_output_help'))
+    parser.add_argument("--quiet", "-q", action="store_true", help=lang.get('cli_quiet_help'))
+    
+    # 添加语言选项
+    parser.add_argument("--language", "-l", type=str, choices=lang.SUPPORTED_LANGUAGES,
+                        help=lang.get('cli_language_help'))
     
     # 解析参数
     args = parser.parse_args()
+    
+    # 如果指定了语言，设置语言
+    if args.language:
+        lang.set_language(args.language)
     
     # 如果没有指定任何测试，默认运行所有测试
     if not (args.cpu or args.memory or args.disk or args.gpu or args.all):
@@ -50,7 +66,7 @@ def main():
     try:
         # 打印欢迎信息
         if not args.quiet:
-            print("电脑性能测试工具 - 命令行版本")
+            print(lang.get('cli_welcome'))
             print("=" * 60)
         
         # 获取系统信息
@@ -64,13 +80,13 @@ def main():
         else:
             # 运行选定的测试
             if not args.quiet:
-                print("\n开始选定的性能测试...")
+                print(f"\n{lang.get('cli_start_selected')}")
             
             # CPU测试
             if args.cpu:
                 if not args.quiet:
                     print("\n" + "=" * 60)
-                    print("CPU性能测试")
+                    print(lang.get('cpu_test'))
                     print("=" * 60)
                 benchmark.results['cpu_single_thread'] = benchmark.cpu_single_thread_test()
                 benchmark.results['cpu_multi_thread'] = benchmark.cpu_multi_thread_test()
@@ -79,7 +95,7 @@ def main():
             if args.memory:
                 if not args.quiet:
                     print("\n" + "=" * 60)
-                    print("内存性能测试")
+                    print(lang.get('memory_test'))
                     print("=" * 60)
                 benchmark.results['memory'] = benchmark.memory_test()
             
@@ -87,7 +103,7 @@ def main():
             if args.disk:
                 if not args.quiet:
                     print("\n" + "=" * 60)
-                    print("磁盘I/O性能测试")
+                    print(lang.get('disk_test'))
                     print("=" * 60)
                 benchmark.results['disk_io'] = benchmark.disk_io_test()
             
@@ -95,26 +111,26 @@ def main():
             if args.gpu:
                 if not args.quiet:
                     print("\n" + "=" * 60)
-                    print("GPU性能测试")
+                    print(lang.get('gpu_test'))
                     print("=" * 60)
                 benchmark.results['gpu'] = benchmark.gpu_test()
             
             # 生成报告
             if not args.quiet:
                 print("\n" + "=" * 60)
-                print("性能测试报告")
+                print(lang.get('performance_report'))
                 print("=" * 60)
             
             benchmark.generate_report(output_file)
         
         # 显示报告保存位置
-        print(f"\n详细报告已保存到: {os.path.abspath(output_file)}")
+        print(f"\n{lang.get('detailed_report_saved')}: {os.path.abspath(output_file)}")
         
     except KeyboardInterrupt:
-        print("\n测试被用户中断")
+        print(f"\n{lang.get('test_interrupted')}")
         sys.exit(1)
     except Exception as e:
-        print(f"\n测试过程中出现错误: {e}")
+        print(f"\n{lang.get('test_error_occurred')}: {e}")
         import traceback
         traceback.print_exc()
         sys.exit(1)

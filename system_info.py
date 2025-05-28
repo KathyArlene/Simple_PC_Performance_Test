@@ -3,10 +3,14 @@
 """
 系统信息收集模块
 用于获取和显示系统硬件信息
+支持多语言（中文、英文、日文、西班牙语）
 """
 
 import platform
 import psutil
+
+# 导入多语言支持模块
+import language as lang
 
 # 尝试导入GPU信息检测库
 try:
@@ -14,7 +18,7 @@ try:
     HAS_WMI = True
 except ImportError:
     HAS_WMI = False
-    print("警告: 未安装wmi库，GPU信息检测将不可用。请使用 'pip install wmi' 安装。")
+    print(lang.get('warning_wmi_not_installed'))
 
 
 def get_system_info():
@@ -48,10 +52,10 @@ def get_system_info():
             
             info['gpus'] = gpus
         except Exception as e:
-            print(f"获取GPU信息时出错: {e}")
-            info['gpus'] = [{'name': '未知', 'error': str(e)}]
+            print(f"{lang.get('error_getting_gpu_info')}: {e}")
+            info['gpus'] = [{'name': lang.get('unknown'), 'error': str(e)}]
     else:
-        info['gpus'] = [{'name': '未知', 'error': 'WMI库未安装'}]
+        info['gpus'] = [{'name': lang.get('unknown'), 'error': lang.get('wmi_not_installed')}]
         
     return info
 
@@ -59,27 +63,27 @@ def get_system_info():
 def print_system_info(system_info):
     """打印系统信息"""
     print("=" * 60)
-    print("系统信息")
+    print(lang.get('system_info'))
     print("=" * 60)
-    print(f"操作系统: {system_info['platform']}")
-    print(f"处理器: {system_info['processor']}")
-    print(f"架构: {system_info['architecture']}")
-    print(f"物理CPU核心: {system_info['cpu_count']}")
-    print(f"逻辑CPU核心: {system_info['logical_cpu_count']}")
-    print(f"总内存: {system_info['total_memory'] / (1024 ** 3):.2f} GB")
-    print(f"可用内存: {system_info['available_memory'] / (1024 ** 3):.2f} GB")
+    print(f"{lang.get('operating_system')}: {system_info['platform']}")
+    print(f"{lang.get('processor')}: {system_info['processor']}")
+    print(f"{lang.get('architecture')}: {system_info['architecture']}")
+    print(f"{lang.get('physical_cpu_cores')}: {system_info['cpu_count']}")
+    print(f"{lang.get('logical_cpu_cores')}: {system_info['logical_cpu_count']}")
+    print(f"{lang.get('total_memory')}: {system_info['total_memory'] / (1024 ** 3):.2f} GB")
+    print(f"{lang.get('available_memory')}: {system_info['available_memory'] / (1024 ** 3):.2f} GB")
     
     # 打印GPU信息
     if 'gpus' in system_info and system_info['gpus']:
-        print("\nGPU信息:")
+        print(f"\n{lang.get('gpu_info')}:")
         for i, gpu in enumerate(system_info['gpus']):
             print(f"  GPU {i+1}: {gpu['name']}")
             if 'video_memory' in gpu and gpu['video_memory']:
-                print(f"    显存: {gpu['video_memory'] / (1024 ** 3):.2f} GB" if gpu['video_memory'] > 0 else "    显存: 未知")
+                print(f"    {lang.get('video_memory')}: {gpu['video_memory'] / (1024 ** 3):.2f} GB" if gpu['video_memory'] > 0 else f"    {lang.get('video_memory')}: {lang.get('unknown')}")
             if 'is_integrated' in gpu:
-                print(f"    类型: {'集成显卡' if gpu['is_integrated'] else '独立显卡'}")
+                print(f"    {lang.get('gpu_type')}: {lang.get('integrated_gpu') if gpu['is_integrated'] else lang.get('discrete_gpu')}")
             if 'driver_version' in gpu and gpu['driver_version'] != 'Unknown':
-                print(f"    驱动版本: {gpu['driver_version']}")
+                print(f"    {lang.get('driver_version')}: {gpu['driver_version']}")
     print()
 
 
