@@ -1,0 +1,80 @@
+{
+  "system_info": {
+    "platform": "Windows-10-10.0.22631-SP0",
+    "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+    "architecture": "64bit",
+    "cpu_count": 4,
+    "logical_cpu_count": 8,
+    "total_memory": 16969424896,
+    "available_memory": 7887351808,
+    "gpus": [
+      {
+        "name": "Intel(R) Iris(R) Xe Graphics",
+        "driver_version": "30.0.100.9864",
+        "video_memory": 1073741824,
+        "video_processor": "Intel(R) Iris(R) Xe Graphics Family",
+        "is_integrated": true
+      }
+    ]
+  },
+  "test_results": {
+    "cpu_single_thread": {
+      "primes_calculated": 10000,
+      "time_taken": 0.43413662910461426,
+      "operations_per_second": 23034.223167541782
+    },
+    "cpu_multi_thread": {
+      "threads_used": 8,
+      "total_operations": 3395304072.7008243,
+      "time_taken": 8.081604719161987,
+      "operations_per_second": 420127461.1526529
+    },
+    "memory": {
+      "1KB": {
+        "allocation_time": 0.0,
+        "throughput_mb_s": Infinity
+      },
+      "1024KB": {
+        "allocation_time": 0.03291678428649902,
+        "throughput_mb_s": 3037.963828107458
+      },
+      "10240KB": {
+        "allocation_time": 0.3448760509490967,
+        "throughput_mb_s": 2899.5924687956917
+      }
+    },
+    "disk_io": {
+      "file_size_mb": 100,
+      "write_time": 0.045660972595214844,
+      "write_speed_mb_s": 2190.0540946970486,
+      "read_time": 0.09984493255615234,
+      "read_speed_mb_s": 1001.5530827642199
+    },
+    "gpu": {
+      "matrix_size": 2000,
+      "cpu_time": 0.09130668640136719,
+      "operations": 15996000000,
+      "cpu_gflops": 175.1897985836937,
+      "gpu_time": 0.5038094520568848,
+      "gpu_gflops": 31.75009903981298,
+      "speedup": 0.18123257915982452
+    }
+  },
+  "scores": {
+    "cpu_single_thread": 4.606844633508357,
+    "cpu_multi_thread": 84.02549223053059,
+    "memory": 30.37963828107458,
+    "disk_write": 21.900540946970487,
+    "disk_read": 13.354041103522931,
+    "gpu": 3.175009903981298,
+    "total": 31.93378759471942,
+    "weights": {
+      "cpu_single": 0.15,
+      "cpu_multi": 0.25,
+      "memory": 0.2,
+      "disk_write": 0.1,
+      "disk_read": 0.1,
+      "gpu": 0.2
+    }
+  }
+}
