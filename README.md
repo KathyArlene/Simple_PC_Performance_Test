@@ -17,6 +17,7 @@
 ## 系统要求
 
 - Windows操作系统
+源代码
 - Python 3.6+
 - 依赖库：
   - PyQt5（GUI界面）
