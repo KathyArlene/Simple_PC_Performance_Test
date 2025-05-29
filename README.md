@@ -1,6 +1,7 @@
 # 电脑性能测试工具  Multi language supported （Chinese English Japanese Spanish）
 
 一个全面的电脑性能测试工具，可以测试CPU、内存、磁盘I/O和GPU性能，并生成详细的性能报告。支持多语言界面（中文、英文、日文、西班牙语）。
+![Uploading image.png…]()
 
 ## 功能特点
 
