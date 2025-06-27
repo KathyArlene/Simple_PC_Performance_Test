@@ -11,11 +11,11 @@ import random
 import tempfile
 
 
-def disk_io_test(file_size_mb=100):
-    """磁盘I/O性能测试
+def disk_io_test(file_size_mb=50):
+    """磁盘I/O性能测试（优化为低配置硬件）
     
     Args:
-        file_size_mb: 测试文件大小（MB）
+        file_size_mb: 测试文件大小（MB，默认降低到50MB）
         
     Returns:
         dict: 包含测试结果的字典

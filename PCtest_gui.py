@@ -10,11 +10,12 @@ import sys
 import os
 import json
 import time
+import psutil
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
                              QHBoxLayout, QPushButton, QLabel, QProgressBar, 
                              QTabWidget, QTextEdit, QGroupBox, QCheckBox, 
                              QMessageBox, QFileDialog, QSplitter, QComboBox,
-                             QAction, QMenu, QMenuBar)
+                             QAction, QMenu, QMenuBar, QGridLayout, QFrame)
 from PyQt5.QtCore import Qt, QThread, pyqtSignal, QTimer
 from PyQt5.QtGui import QFont, QIcon
 
@@ -24,6 +25,9 @@ from PCtest_core import PerformanceBenchmark
 # 导入多语言支持模块
 import language as lang
 
+# 导入硬件检测模块
+from hardware_detector import HardwareDetector
+
 
 class BenchmarkThread(QThread):
     """性能测试线程，避免界面卡死"""
@@ -31,17 +35,28 @@ class BenchmarkThread(QThread):
     progress_signal = pyqtSignal(int)  # 进度信号
     finished_signal = pyqtSignal(dict)  # 测试完成信号
     error_signal = pyqtSignal(str)  # 错误信号
+    hardware_info_signal = pyqtSignal(dict)  # 硬件信息信号
     
     def __init__(self, test_options):
         super().__init__()
         self.test_options = test_options
         self.benchmark = PerformanceBenchmark()
+        self.hardware_detector = HardwareDetector()
+        self.test_params = None
         
     def run(self):
         try:
+            # 硬件检测和参数配置
+            self.update_signal.emit(lang.get('detecting_hardware'))
+            hardware_config = self.hardware_detector.detect_and_configure()
+            self.test_params = hardware_config['test_parameters']
+            
+            # 发送硬件信息
+            self.hardware_info_signal.emit(hardware_config['hardware_info'])
+            
             # 发送系统信息
             self.update_signal.emit(lang.get('getting_system_info'))
-            system_info_text = self._format_system_info()
+            system_info_text = self._format_system_info(hardware_config['hardware_info'])
             self.update_signal.emit(system_info_text)
             self.progress_signal.emit(5)
             
@@ -51,31 +66,49 @@ class BenchmarkThread(QThread):
             # CPU单线程测试
             if self.test_options.get('cpu_single', True):
                 self.update_signal.emit(f"\n{lang.get('running_cpu_single_test')}")
-                results['cpu_single_thread'] = self.benchmark.cpu_single_thread_test()
+                cpu_params = self.test_params['cpu']
+                results['cpu_single_thread'] = self.benchmark.cpu_single_thread_test(
+                    duration=cpu_params['single_duration'],
+                    calculation_count=cpu_params['calculation_count']
+                )
                 self.progress_signal.emit(20)
             
             # CPU多线程测试
             if self.test_options.get('cpu_multi', True):
                 self.update_signal.emit(f"\n{lang.get('running_cpu_multi_test')}")
-                results['cpu_multi_thread'] = self.benchmark.cpu_multi_thread_test()
+                cpu_params = self.test_params['cpu']
+                results['cpu_multi_thread'] = self.benchmark.cpu_multi_thread_test(
+                    duration=cpu_params['multi_duration'],
+                    max_threads=cpu_params['max_threads'] if cpu_params['max_threads'] > 0 else None,
+                    calculation_count=cpu_params['calculation_count']
+                )
                 self.progress_signal.emit(40)
             
             # 内存测试
             if self.test_options.get('memory', True):
                 self.update_signal.emit(f"\n{lang.get('running_memory_test')}")
-                results['memory'] = self.benchmark.memory_test()
+                memory_params = self.test_params['memory']
+                results['memory'] = self.benchmark.memory_test(
+                    size_mb=memory_params['size_mb']
+                )
                 self.progress_signal.emit(60)
             
             # 磁盘测试
             if self.test_options.get('disk', True):
                 self.update_signal.emit(f"\n{lang.get('running_disk_test')}")
-                results['disk_io'] = self.benchmark.disk_io_test()
+                disk_params = self.test_params['disk']
+                results['disk_io'] = self.benchmark.disk_io_test(
+                    file_size_mb=disk_params['file_size_mb']
+                )
                 self.progress_signal.emit(80)
             
             # GPU测试
             if self.test_options.get('gpu', True):
                 self.update_signal.emit(f"\n{lang.get('running_gpu_test')}")
-                results['gpu'] = self.benchmark.gpu_test()
+                gpu_params = self.test_params['gpu']
+                results['gpu'] = self.benchmark.gpu_test(
+                    max_load=gpu_params['max_load']
+                )
                 self.progress_signal.emit(95)
             
             # 保存结果
@@ -95,7 +128,7 @@ class BenchmarkThread(QThread):
             error_msg = f"{lang.get('test_error')}: {str(e)}\n{traceback.format_exc()}"
             self.error_signal.emit(error_msg)
     
-    def _format_system_info(self):
+    def _format_system_info(self, hardware_info=None):
         """格式化系统信息"""
         info = self.benchmark.system_info
         text = f"{lang.get('system_info')}:\n"
@@ -106,6 +139,16 @@ class BenchmarkThread(QThread):
         text += f"{lang.get('logical_cores')}: {info['logical_cpu_count']}\n"
         text += f"{lang.get('total_memory')}: {info['total_memory'] / (1024 ** 3):.2f} GB\n"
         text += f"{lang.get('available_memory')}: {info['available_memory'] / (1024 ** 3):.2f} GB\n"
+        
+        # 硬件检测信息
+        if hardware_info:
+            text += f"\n{lang.get('hardware_detection')}:\n"
+            text += f"{lang.get('detected_cpu')}: {hardware_info['cpu']['name']}\n"
+            text += f"{lang.get('detected_gpu')}: {hardware_info['gpu']['name']}\n"
+            text += f"{lang.get('cpu_performance_score')}: {hardware_info['cpu_score']}\n"
+            text += f"{lang.get('gpu_performance_score')}: {hardware_info['gpu_score']}\n"
+            text += f"{lang.get('cpu_tier')}: {hardware_info['cpu_tier'].upper()}\n"
+            text += f"{lang.get('gpu_tier')}: {hardware_info['gpu_tier'].upper()}\n"
         
         # GPU信息
         if 'gpus' in info and info['gpus']:
@@ -156,8 +199,32 @@ class MainWindow(QMainWindow):
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
         
+        # 创建主测试页面（移除标签页，直接使用单页面）
+        self.test_tab = QWidget()
+        self.test_tab_layout = QVBoxLayout(self.test_tab)
+        
         # 主布局
         main_layout = QVBoxLayout(self.central_widget)
+        main_layout.addWidget(self.test_tab)
+        
+        # 设置测试标签页内容
+        self.setup_test_tab()
+    
+    def setup_test_tab(self):
+        """设置测试标签页内容"""
+        # 添加语言选择按钮组
+        language_group = QGroupBox(lang.get('language'))
+        language_layout = QHBoxLayout()
+        
+        # 为每种语言创建按钮
+        for lang_code, lang_name in lang.LANGUAGE_NAMES.items():
+            language_button = QPushButton(lang_name)
+            language_button.setProperty("lang_code", lang_code)
+            language_button.clicked.connect(self.change_language)
+            language_layout.addWidget(language_button)
+        
+        language_group.setLayout(language_layout)
+        self.test_tab_layout.addWidget(language_group)
         
         # 创建选项区域
         self.options_group = QGroupBox(lang.get('test_options'))
@@ -182,7 +249,7 @@ class MainWindow(QMainWindow):
         options_layout.addWidget(self.gpu_check)
         self.options_group.setLayout(options_layout)
         
-        main_layout.addWidget(self.options_group)
+        self.test_tab_layout.addWidget(self.options_group)
         
         # 创建按钮区域
         button_layout = QHBoxLayout()
@@ -199,19 +266,19 @@ class MainWindow(QMainWindow):
         button_layout.addWidget(self.start_button)
         button_layout.addWidget(self.save_button)
         
-        main_layout.addLayout(button_layout)
+        self.test_tab_layout.addLayout(button_layout)
         
         # 进度条
         self.progress_bar = QProgressBar()
         self.progress_bar.setRange(0, 100)
         self.progress_bar.setValue(0)
-        main_layout.addWidget(self.progress_bar)
+        self.test_tab_layout.addWidget(self.progress_bar)
         
         # 输出区域
         self.output_text = QTextEdit()
         self.output_text.setReadOnly(True)
         self.output_text.setFont(QFont("Consolas", 10))
-        main_layout.addWidget(self.output_text)
+        self.test_tab_layout.addWidget(self.output_text)
         
         # 初始化变量
         self.benchmark_thread = None
@@ -223,38 +290,34 @@ class MainWindow(QMainWindow):
     def create_menu_bar(self):
         """创建菜单栏"""
         menu_bar = self.menuBar()
-        
-        # 语言菜单
-        language_menu = menu_bar.addMenu(lang.get('language'))
-        
-        # 添加语言选项
-        for lang_code, lang_name in lang.LANGUAGE_NAMES.items():
-            language_action = QAction(lang_name, self)
-            language_action.setData(lang_code)
-            language_action.triggered.connect(self.change_language)
-            language_menu.addAction(language_action)
     
     def change_language(self):
         """切换语言"""
-        action = self.sender()
-        if action:
-            lang_code = action.data()
+        button = self.sender()
+        if button:
+            lang_code = button.property("lang_code")
             lang.set_language(lang_code)
             self.update_ui_texts()
+    
+    # 删除硬件监测标签页设置方法
+        
+    # 删除硬件监测更新方法
     
     def update_ui_texts(self):
         """更新UI文本"""
         # 更新窗口标题
         self.setWindowTitle(lang.get('window_title'))
         
-        # 更新菜单
-        self.menuBar().clear()
-        self.create_menu_bar()
+        # 更新语言选择组标题
+        test_layout = self.test_tab.layout()
+        for i in range(test_layout.count()):
+            widget = test_layout.itemAt(i).widget()
+            if isinstance(widget, QGroupBox) and any(lang_name in widget.title() for lang_name in lang.LANGUAGE_NAMES.values()):
+                widget.setTitle(lang.get('language'))
+                break
         
-        # 更新选项组标题
+        # 更新测试选项组
         self.options_group.setTitle(lang.get('test_options'))
-        
-        # 更新复选框文本
         self.cpu_single_check.setText(lang.get('cpu_single'))
         self.cpu_multi_check.setText(lang.get('cpu_multi'))
         self.memory_check.setText(lang.get('memory'))
@@ -264,6 +327,10 @@ class MainWindow(QMainWindow):
         # 更新按钮文本
         self.start_button.setText(lang.get('start_test'))
         self.save_button.setText(lang.get('save_report'))
+        
+        # 更新菜单栏
+        self.menuBar().clear()
+        self.create_menu_bar()
         
         # 更新欢迎信息
         if not self.benchmark_thread or not self.benchmark_thread.isRunning():
@@ -301,6 +368,7 @@ class MainWindow(QMainWindow):
         self.benchmark_thread.progress_signal.connect(self.update_progress)
         self.benchmark_thread.finished_signal.connect(self.test_finished)
         self.benchmark_thread.error_signal.connect(self.test_error)
+        self.benchmark_thread.hardware_info_signal.connect(self.display_hardware_info)
         self.benchmark_thread.start()
     
     def update_output(self, text):
@@ -313,6 +381,18 @@ class MainWindow(QMainWindow):
     def update_progress(self, value):
         """更新进度条"""
         self.progress_bar.setValue(value)
+    
+    def display_hardware_info(self, hardware_info):
+        """显示硬件检测信息"""
+        info_text = f"\n{lang.get('hardware_detection')}:\n"
+        info_text += f"{lang.get('detected_cpu')}: {hardware_info['cpu']['name']}\n"
+        info_text += f"{lang.get('detected_gpu')}: {hardware_info['gpu']['name']}\n"
+        info_text += f"{lang.get('cpu_performance_score')}: {hardware_info['cpu_score']}\n"
+        info_text += f"{lang.get('gpu_performance_score')}: {hardware_info['gpu_score']}\n"
+        info_text += f"{lang.get('cpu_tier')}: {hardware_info['cpu_tier'].upper()}\n"
+        info_text += f"{lang.get('gpu_tier')}: {hardware_info['gpu_tier'].upper()}\n"
+        info_text += "-" * 50
+        self.update_output(info_text)
     
     def test_finished(self, results):
         """测试完成"""
@@ -364,7 +444,20 @@ class MainWindow(QMainWindow):
 
 def main():
     """主函数"""
+    # 设置环境变量确保正确显示中文
+    os.environ['PYTHONIOENCODING'] = 'utf-8'
+    
     app = QApplication(sys.argv)
+    
+    # 设置应用程序字体以支持中文显示
+    font = app.font()
+    font.setFamily("Microsoft YaHei, SimHei, Arial Unicode MS, sans-serif")
+    app.setFont(font)
+    
+    # 设置应用程序编码
+    app.setApplicationName("电脑性能测试工具")
+    app.setApplicationVersion("1.0")
+    
     window = MainWindow()
     window.show()
     sys.exit(app.exec_())

@@ -19,12 +19,12 @@ def calculate_scores(results):
     """
     scores = {}
     weights = {
-        'cpu_single': 0.05,  # 5%
+        'cpu_single': 0.15,  # 15%
         'cpu_multi': 0.30,   # 30%
-        'memory': 0.25,      # 25%
-        'disk_write': 0.10,  # 10%
-        'disk_read': 0.10,   # 10%
-        'gpu': 0.20          # 20%
+        'memory': 0.10,      # 10%
+        'disk_write': 0.05,  # 5%
+        'disk_read': 0.05,   # 5%
+        'gpu': 0.35          # 35%
     }
     
     # CPU单线程得分

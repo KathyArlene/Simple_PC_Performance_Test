@@ -6,7 +6,7 @@
     "cpu_count": 4,
     "logical_cpu_count": 8,
     "total_memory": 16969424896,
-    "available_memory": 7887351808,
+    "available_memory": 7668506624,
     "gpus": [
       {
         "name": "Intel(R) Iris(R) Xe Graphics",
@@ -19,15 +19,15 @@
   },
   "test_results": {
     "cpu_single_thread": {
-      "primes_calculated": 10000,
-      "time_taken": 0.43413662910461426,
-      "operations_per_second": 23034.223167541782
+      "primes_calculated": 15000,
+      "time_taken": 0.30156922340393066,
+      "operations_per_second": 49739.82368190324
     },
     "cpu_multi_thread": {
-      "threads_used": 8,
-      "total_operations": 3395304072.7008243,
-      "time_taken": 8.081604719161987,
-      "operations_per_second": 420127461.1526529
+      "threads_used": 2,
+      "total_operations": 300105316.9487833,
+      "time_taken": 0.2763707637786865,
+      "operations_per_second": 1085879392.0369341
     },
     "memory": {
       "1KB": {
@@ -35,46 +35,50 @@
         "throughput_mb_s": Infinity
       },
       "1024KB": {
-        "allocation_time": 0.03291678428649902,
-        "throughput_mb_s": 3037.963828107458
+        "allocation_time": 0.00908350944519043,
+        "throughput_mb_s": 5504.480432557285
       },
-      "10240KB": {
-        "allocation_time": 0.3448760509490967,
-        "throughput_mb_s": 2899.5924687956917
+      "5120KB": {
+        "allocation_time": 0.029812097549438477,
+        "throughput_mb_s": 6708.685951008069
+      },
+      "20480KB": {
+        "allocation_time": 0.028419017791748047,
+        "throughput_mb_s": 7037.540898337221
       }
     },
     "disk_io": {
-      "file_size_mb": 100,
-      "write_time": 0.045660972595214844,
-      "write_speed_mb_s": 2190.0540946970486,
-      "read_time": 0.09984493255615234,
-      "read_speed_mb_s": 1001.5530827642199
+      "file_size_mb": 50,
+      "write_time": 0.013225793838500977,
+      "write_speed_mb_s": 3780.49141023561,
+      "read_time": 0.02955484390258789,
+      "read_speed_mb_s": 1691.770058566335
     },
     "gpu": {
-      "matrix_size": 2000,
-      "cpu_time": 0.09130668640136719,
-      "operations": 15996000000,
-      "cpu_gflops": 175.1897985836937,
-      "gpu_time": 0.5038094520568848,
-      "gpu_gflops": 31.75009903981298,
-      "speedup": 0.18123257915982452
+      "matrix_size": 700,
+      "cpu_time": 0.0029916763305664062,
+      "operations": 685510000,
+      "cpu_gflops": 229.13909268728085,
+      "gpu_time": 0.020946979522705078,
+      "gpu_gflops": 32.725959332559356,
+      "speedup": 0.14282137084841448
     }
   },
   "scores": {
-    "cpu_single_thread": 4.606844633508357,
-    "cpu_multi_thread": 84.02549223053059,
-    "memory": 30.37963828107458,
-    "disk_write": 21.900540946970487,
-    "disk_read": 13.354041103522931,
-    "gpu": 3.175009903981298,
-    "total": 31.93378759471942,
+    "cpu_single_thread": 9.947964736380648,
+    "cpu_multi_thread": 217.17587840738682,
+    "memory": 55.04480432557285,
+    "disk_write": 37.8049141023561,
+    "disk_read": 22.5569341142178,
+    "gpu": 3.2725959332559356,
+    "total": 76.31293965269872,
     "weights": {
       "cpu_single": 0.15,
-      "cpu_multi": 0.25,
-      "memory": 0.2,
-      "disk_write": 0.1,
-      "disk_read": 0.1,
-      "gpu": 0.2
+      "cpu_multi": 0.3,
+      "memory": 0.1,
+      "disk_write": 0.05,
+      "disk_read": 0.05,
+      "gpu": 0.35
     }
   }
 }

@@ -35,25 +35,27 @@ class PerformanceBenchmark:
         """打印系统信息"""
         print_system_info(self.system_info)
     
-    def cpu_single_thread_test(self, duration=5):
-        """运行CPU单线程测试"""
+    def cpu_single_thread_test(self, duration=5, calculation_count=None):
+        """运行单线程CPU性能测试（降低测试时长）"""
+        # calculation_count参数为了兼容性保留，但实际不使用
         return cpu_single_thread_test(duration)
     
-    def cpu_multi_thread_test(self, duration=5):
-        """运行CPU多线程测试"""
-        return cpu_multi_thread_test(self.system_info['logical_cpu_count'], duration)
+    def cpu_multi_thread_test(self, duration=5, max_threads=2, calculation_count=None):
+        """运行多线程CPU性能测试（限制线程数和测试时长）"""
+        # calculation_count参数为了兼容性保留，但实际不使用
+        return cpu_multi_thread_test(duration, max_threads)
     
-    def memory_test(self):
-        """运行内存性能测试"""
-        return memory_test()
+    def memory_test(self, size_mb=200):
+        """运行内存性能测试（降低测试数据量）"""
+        return memory_test(size_mb)
     
-    def disk_io_test(self, file_size_mb=100):
-        """运行磁盘I/O性能测试"""
+    def disk_io_test(self, file_size_mb=50):
+        """运行磁盘I/O性能测试（降低文件大小）"""
         return disk_io_test(file_size_mb)
     
-    def gpu_test(self):
+    def gpu_test(self, max_load=0.7):
         """运行GPU性能测试"""
-        return gpu_test(self.system_info.get('gpus'))
+        return gpu_test(self.system_info.get('gpus'), max_load=max_load)
     
     def run_all_tests(self):
         """运行所有测试"""

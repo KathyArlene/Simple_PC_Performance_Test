@@ -17,11 +17,12 @@ except ImportError:
     print("警告: 未安装pyopencl库，GPU加速测试将不可用。请使用 'pip install pyopencl' 安装。")
 
 
-def gpu_test(gpu_info=None):
-    """GPU性能测试 - 使用矩阵乘法基准测试
+def gpu_test(gpu_info=None, max_load=0.5):
+    """GPU性能测试 - 使用矩阵乘法基准测试（优化为低配置硬件）
     
     Args:
         gpu_info: GPU信息字典，用于检测是否有可用GPU
+        max_load: 最大负载系数（0.5表示50%负载）
         
     Returns:
         dict: 包含测试结果的字典
@@ -35,9 +36,9 @@ def gpu_test(gpu_info=None):
         
     # 使用NumPy进行简单的矩阵运算测试
     try:
-        # 创建大型矩阵
-        matrix_size = 2000
-        print(f"  测试 {matrix_size}x{matrix_size} 矩阵乘法...")
+        # 大幅降低矩阵大小以适配低配置硬件
+        matrix_size = int(1000 * max_load)  # 从2000降低到500（当max_load=0.5时）
+        print(f"  测试 {matrix_size}x{matrix_size} 矩阵乘法（负载限制: {max_load*100:.0f}%）...")
         
         # 创建随机矩阵
         matrix_a = np.random.rand(matrix_size, matrix_size).astype(np.float32)

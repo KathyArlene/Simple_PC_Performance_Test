@@ -7,10 +7,11 @@ CPU性能测试模块
 
 import time
 import math
+import psutil
 from concurrent.futures import ThreadPoolExecutor
 
 
-def cpu_single_thread_test(duration=5):
+def cpu_single_thread_test(duration=20):
     """单线程CPU测试
     
     Args:
@@ -34,7 +35,7 @@ def cpu_single_thread_test(duration=5):
             if is_prime:
                 count += 1
             num += 1
-            if count >= 10000:  # 计算10000个素数
+            if count >= 15000:  # 计算15000个素数，增加计算量
                 break
         return count
 
@@ -57,12 +58,12 @@ def cpu_single_thread_test(duration=5):
     }
 
 
-def cpu_multi_thread_test(logical_cpu_count, duration=5):
-    """多线程CPU测试
+def cpu_multi_thread_test(duration=5, max_threads=2):
+    """多线程CPU测试（优化为低配置硬件）
     
     Args:
-        logical_cpu_count: 逻辑CPU核心数
         duration: 测试持续时间（秒）
+        max_threads: 最大线程数（限制为2以避免跑满CPU）
         
     Returns:
         dict: 包含测试结果的字典
@@ -70,14 +71,18 @@ def cpu_multi_thread_test(logical_cpu_count, duration=5):
     print("正在进行多线程CPU测试...")
 
     def worker_task():
-        """工作线程任务"""
+        """工作线程任务（降低计算强度）"""
         count = 0
-        # 使用绝对值确保结果为正数
-        for i in range(1000000):
+        # 降低计算量以适配低配置硬件
+        for i in range(500000):  # 从2000000降低到500000
             count += abs(math.sqrt(i) * math.sin(i))
         return count
 
-    num_threads = logical_cpu_count
+    # 确保num_threads不为None
+    if max_threads is None or max_threads <= 0:
+        num_threads = psutil.cpu_count(logical=True) or 2
+    else:
+        num_threads = max_threads
 
     start_time = time.time()
     with ThreadPoolExecutor(max_workers=num_threads) as executor:

@@ -116,6 +116,54 @@ TRANSLATIONS = {
         'ja': 'テスト中にエラーが発生しました:',
         'es': 'Error durante la prueba:'
     },
+    'detecting_hardware': {
+        'zh': '正在检测硬件配置...',
+        'en': 'Detecting hardware configuration...',
+        'ja': 'ハードウェア構成を検出しています...',
+        'es': 'Detectando configuración de hardware...'
+    },
+    'hardware_detection': {
+        'zh': '硬件检测结果',
+        'en': 'Hardware Detection Results',
+        'ja': 'ハードウェア検出結果',
+        'es': 'Resultados de Detección de Hardware'
+    },
+    'detected_cpu': {
+        'zh': '检测到的CPU',
+        'en': 'Detected CPU',
+        'ja': '検出されたCPU',
+        'es': 'CPU Detectado'
+    },
+    'detected_gpu': {
+        'zh': '检测到的GPU',
+        'en': 'Detected GPU',
+        'ja': '検出されたGPU',
+        'es': 'GPU Detectado'
+    },
+    'cpu_performance_score': {
+        'zh': 'CPU性能分数',
+        'en': 'CPU Performance Score',
+        'ja': 'CPU性能スコア',
+        'es': 'Puntuación de Rendimiento de CPU'
+    },
+    'gpu_performance_score': {
+        'zh': 'GPU性能分数',
+        'en': 'GPU Performance Score',
+        'ja': 'GPU性能スコア',
+        'es': 'Puntuación de Rendimiento de GPU'
+    },
+    'cpu_tier': {
+        'zh': 'CPU性能等级',
+        'en': 'CPU Performance Tier',
+        'ja': 'CPU性能ティア',
+        'es': 'Nivel de Rendimiento de CPU'
+    },
+    'gpu_tier': {
+        'zh': 'GPU性能等级',
+        'en': 'GPU Performance Tier',
+        'ja': 'GPU性能ティア',
+        'es': 'Nivel de Rendimiento de GPU'
+    },
     'getting_system_info': {
         'zh': '获取系统信息...',
         'en': 'Getting system information...',
@@ -274,6 +322,12 @@ TRANSLATIONS = {
         'ja': 'GPU情報',
         'es': 'Información de GPU'
     },
+    'cpu_info': {
+        'zh': 'CPU信息',
+        'en': 'CPU Information',
+        'ja': 'CPU情報',
+        'es': 'Información de CPU'
+    },
     'video_memory': {
         'zh': '显存',
         'en': 'Video Memory',
@@ -309,6 +363,96 @@ TRANSLATIONS = {
         'en': 'Driver Version',
         'ja': 'ドライババージョン',
         'es': 'Versión del Controlador'
+    },
+    'cpu_frequency': {
+        'zh': 'CPU频率',
+        'en': 'CPU Frequency',
+        'ja': 'CPU周波数',
+        'es': 'Frecuencia de CPU'
+    },
+    'cpu_temperature': {
+        'zh': 'CPU温度',
+        'en': 'CPU Temperature',
+        'ja': 'CPU温度',
+        'es': 'Temperatura de CPU'
+    },
+    'gpu_frequency': {
+        'zh': 'GPU频率',
+        'en': 'GPU Frequency',
+        'ja': 'GPU周波数',
+        'es': 'Frecuencia de GPU'
+    },
+    'gpu_temperature': {
+        'zh': 'GPU温度',
+        'en': 'GPU Temperature',
+        'ja': 'GPU温度',
+        'es': 'Temperatura de GPU'
+    },
+    'current_frequency': {
+        'zh': '当前频率',
+        'en': 'Current Frequency',
+        'ja': '現在の周波数',
+        'es': 'Frecuencia Actual'
+    },
+    'max_frequency': {
+        'zh': '最大频率',
+        'en': 'Max Frequency',
+        'ja': '最大周波数',
+        'es': 'Frecuencia Máxima'
+    },
+    'min_frequency': {
+        'zh': '最小频率',
+        'en': 'Min Frequency',
+        'ja': '最小周波数',
+        'es': 'Frecuencia Mínima'
+    },
+    'temperature': {
+        'zh': '温度',
+        'en': 'Temperature',
+        'ja': '温度',
+        'es': 'Temperatura'
+    },
+    'frequency': {
+        'zh': '频率',
+        'en': 'Frequency',
+        'ja': '周波数',
+        'es': 'Frecuencia'
+    },
+    'fan_speed': {
+        'zh': '风扇转速',
+        'en': 'Fan Speed',
+        'ja': 'ファン速度',
+        'es': 'Velocidad del Ventilador'
+    },
+    'hardware_monitor': {
+        'zh': '硬件监测',
+        'en': 'Hardware Monitor',
+        'ja': 'ハードウェアモニター',
+        'es': 'Monitor de Hardware'
+    },
+    'real_time_monitor': {
+        'zh': '实时监测',
+        'en': 'Real-time Monitor',
+        'ja': 'リアルタイムモニター',
+        'es': 'Monitor en Tiempo Real'
+    },
+    'usage': {
+        'zh': '使用率',
+        'en': 'Usage',
+        'ja': '使用率',
+        'es': 'Uso'
+    },
+    'mhz': {
+        'zh': 'MHz',
+        'en': 'MHz',
+        'ja': 'MHz',
+        'es': 'MHz'
+    },
+    'celsius': {
+        'zh': '°C',
+        'en': '°C',
+        'ja': '°C',
+        'es': '°C'
     },
     
     # 测试报告
@@ -365,6 +509,36 @@ TRANSLATIONS = {
         'en': 'CPU Multi Thread Performance Score',
         'ja': 'CPUマルチスレッド性能スコア',
         'es': 'Puntuación de Rendimiento de CPU Multi Hilo'
+    },
+    'language_selection': {
+        'zh': '语言选择',
+        'en': 'Language Selection',
+        'ja': '言語選択',
+        'es': 'Selección de Idioma'
+    },
+    'test_options_title': {
+        'zh': '测试选项',
+        'en': 'Test Options',
+        'ja': 'テストオプション',
+        'es': 'Opciones de Prueba'
+    },
+    'start_test': {
+        'zh': '开始测试',
+        'en': 'Start Test',
+        'ja': 'テスト開始',
+        'es': 'Iniciar Prueba'
+    },
+    'show_chart': {
+        'zh': '显示图表',
+        'en': 'Show Chart',
+        'ja': 'チャート表示',
+        'es': 'Mostrar Gráfico'
+    },
+    'welcome_message': {
+        'zh': '欢迎使用电脑性能测试工具！\n请选择测试项目并点击开始测试。',
+        'en': 'Welcome to PC Performance Test Tool!\nPlease select test items and click Start Test.',
+        'ja': 'パソコン性能テストツールへようこそ！\nテスト項目を選択して、テスト開始をクリックしてください。',
+        'es': '¡Bienvenido a la Herramienta de Prueba de Rendimiento de PC!\nSeleccione los elementos de prueba y haga clic en Iniciar Prueba.'
     },
     'memory_score': {
         'zh': '内存性能得分',

@@ -1,9 +1,6 @@
-# 电脑性能测试工具  Multi language supported （Chinese English Japanese Spanish）
+# 电脑性能测试工具
 
 一个全面的电脑性能测试工具，可以测试CPU、内存、磁盘I/O和GPU性能，并生成详细的性能报告。支持多语言界面（中文、英文、日文、西班牙语）。
-
-![image](https://github.com/user-attachments/assets/2014d6ef-3f03-4c2a-b9c6-241a6b6693d2)
-
 
 ## 功能特点
 
@@ -20,9 +17,6 @@
 ## 系统要求
 
 - Windows操作系统
-
-##源代码
-
 - Python 3.6+
 - 依赖库：
   - PyQt5（GUI界面）
